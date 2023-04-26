@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TaskUpdated;
 use App\Models\Task;
 use Illuminate\Http\Request;
 
@@ -62,7 +63,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
+        return view('tasks.show', compact('task'));
     }
 
     /**
@@ -98,6 +99,8 @@ class TaskController extends Controller
         $task->statut = $validatedData['statut'];
         $task->save();
     
+        event(new TaskUpdated($task));
+
         return redirect()->route('tasks.index')->with('success', 'La tâche a été mise à jour avec succès.');
     }
 

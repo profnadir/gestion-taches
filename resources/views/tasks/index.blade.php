@@ -44,6 +44,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <a href="{{ route('tasks.edit', $task->id) }}" class="text-indigo-600 hover:text-indigo-900">Modifier</a>
                                         <a href="{{ route('tasks.delete', $task->id) }}" class="text-red-600 hover:text-red-900">Supprimer</a>
+                                        <a href="{{ route('tasks.show', $task->id) }}" class="text-teal-600 hover:text-teal-900">Afficher</a>
                                     </td>
                                 </tr>
                             @endforeach
