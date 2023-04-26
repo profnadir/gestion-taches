@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/tasks/{task}/delete', [TaskController::class, 'delete'])->name('tasks.delete');
+    Route::post('/tasks/{task}/complete', [TaskController::class, 'complete'])->name('tasks.complete');
 });
 Route::middleware('auth')->resource('tasks', TaskController::class);
 

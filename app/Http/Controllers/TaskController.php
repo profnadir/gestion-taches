@@ -13,9 +13,36 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tasks = Task::paginate(10);
+        $tasks = Task::query();
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $tasks->where('titre', 'like', "%$search%")
+                  ->orWhere('description', 'like', "%$search%");
+        }
+
+        if ($request->has('sort') && in_array($request->sort, ['titre', 'date_echeance'])) {
+            $sort = $request->sort;
+            $order = $request->has('order') && $request->order == 'desc' ? 'desc' : 'asc';
+            $tasks->orderBy($sort, $order);
+        }
+        /* if ($request->has('sort')) {
+            $sort = $request->input('sort');
+            if ($sort == 'titre') {
+                $tasks->orderBy('titre');
+            } elseif ($sort == 'date_echeance') {
+                $tasks->orderBy('date_echeance');
+            }
+        } */
+
+        if ($request->has('statut') && in_array($request->statut, ['en cours', 'terminée'])) {
+            $tasks->where('statut', $request->statut);
+        }
+
+        $tasks = $tasks->latest()->paginate(10);
+
         return view('tasks.index', compact('tasks'));
     }
 
@@ -124,5 +151,12 @@ class TaskController extends Controller
         $task->delete();
     
         return redirect()->route('tasks.index')->with('success', 'La tâche a été supprimée avec succès.');
+    }
+
+    public function complete(Task $task)
+    {
+        $task->update(['statut' => 'terminée']);
+
+        return redirect()->route('tasks.index');
     }
 }
